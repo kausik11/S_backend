@@ -6,6 +6,10 @@ const cors = require("cors");
 const serviceRoutes = require("./src/routes/serviceRoutes");
 const testimonialRoutes = require("./src/routes/testimonialRoutes");
 const blogRoutes = require("./src/routes/blogRoutes");
+const newsletterRoutes = require("./src/routes/newsletterRoutes");
+const galleryRoutes = require("./src/routes/galleryRoutes");
+const faqRoutes = require("./src/routes/faqRoutes");
+const callbackRoutes = require("./src/routes/callbackRoutes");
 const globalErrorHandler = require("./src/middlewares/globalErrorHandler");
 
 app.use(
@@ -28,6 +32,10 @@ app.get("/api/health", (_req, res) =>
 app.use("/api/services", serviceRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/blogs", blogRoutes);
+app.use("/api/newsletter", newsletterRoutes);
+app.use("/api/gallery", galleryRoutes);
+app.use("/api/faqs", faqRoutes);
+app.use("/api/callbacks", callbackRoutes);
 
 // 404 handler for any unmatched routes
 app.use((req, res) => {

@@ -81,13 +81,17 @@ const getBlogById = async (req, res) => {
 
 const createBlog = async (req, res) => {
   try {
-    const { title, description, category, writtenBy } = req.body;
+    const { title, description, category, writtenBy, quickClinicalTip } =
+      req.body;
     const metadata = normalizeMetadata(req.body.metadata);
 
-    if (!title || !description || !category || !writtenBy) {
+    if (!title || !description || !category || !writtenBy || !quickClinicalTip) {
       return res
         .status(400)
-        .json({ message: "Title, description, category, and writtenBy are required" });
+        .json({
+          message:
+            "Title, description, category, writtenBy, and quickClinicalTip are required",
+        });
     }
 
     if (!VALID_CATEGORIES.includes(category)) {
@@ -107,6 +111,7 @@ const createBlog = async (req, res) => {
       description,
       category,
       writtenBy,
+      quickClinicalTip,
       metadata,
       imageUrl,
       imagePublicId,
@@ -121,7 +126,8 @@ const createBlog = async (req, res) => {
 
 const updateBlog = async (req, res) => {
   try {
-    const { title, description, category, writtenBy } = req.body;
+    const { title, description, category, writtenBy, quickClinicalTip } =
+      req.body;
     const metadata = normalizeMetadata(req.body.metadata);
     const blog = await Blog.findById(req.params.id);
 
@@ -139,6 +145,7 @@ const updateBlog = async (req, res) => {
     if (description) blog.description = description;
     if (category) blog.category = category;
     if (writtenBy) blog.writtenBy = writtenBy;
+    if (quickClinicalTip) blog.quickClinicalTip = quickClinicalTip;
     if (metadata.length) blog.metadata = metadata;
 
     if (req.file) {

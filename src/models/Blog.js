@@ -57,6 +57,11 @@ const blogSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    quickClinicalTip: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     comments: [commentSchema],
   },
   { timestamps: true }
