@@ -29,6 +29,7 @@ app.get("/api/health", (_req, res) =>
   res.json({ ok: true, uptime: process.uptime(), ts: Date.now() })
 );
 
+// those all are public endpoints right now
 app.use("/api/services", serviceRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/blogs", blogRoutes);
