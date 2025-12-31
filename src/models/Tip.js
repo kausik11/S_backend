@@ -14,7 +14,11 @@ const tipSchema = new mongoose.Schema(
     },
     imageUrl: {
       type: String,
-      trim: true,
+      required: true,
+    },
+    imagePublicId: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

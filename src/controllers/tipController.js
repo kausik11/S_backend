@@ -1,4 +1,21 @@
 const Tip = require("../models/Tip");
+const cloudinary = require("../config/cloudinary");
+
+const uploadImage = async (file) => {
+  const base64Image = `data:${file.mimetype};base64,${file.buffer.toString(
+    "base64"
+  )}`;
+
+  const uploadResult = await cloudinary.uploader.upload(base64Image, {
+    folder: "sbanerjee/tips",
+    resource_type: "auto",
+  });
+
+  return {
+    imageUrl: uploadResult.secure_url,
+    imagePublicId: uploadResult.public_id,
+  };
+};
 
 const getTips = async (_req, res) => {
   try {
@@ -27,16 +44,23 @@ const getTipById = async (req, res) => {
 
 const createTip = async (req, res) => {
   try {
-    const { title, text, imageUrl } = req.body;
+    const { title, text } = req.body;
 
     if (!title || !text) {
       return res.status(400).json({ message: "Title and text are required" });
     }
 
+    if (!req.file) {
+      return res.status(400).json({ message: "Image file is required" });
+    }
+
+    const { imageUrl, imagePublicId } = await uploadImage(req.file);
+
     const tip = await Tip.create({
       title,
       text,
-      imageUrl: imageUrl ? imageUrl.trim() : "",
+      imageUrl,
+      imagePublicId,
     });
 
     res.status(201).json(tip);
@@ -48,7 +72,7 @@ const createTip = async (req, res) => {
 
 const updateTip = async (req, res) => {
   try {
-    const { title, text, imageUrl } = req.body;
+    const { title, text } = req.body;
     const tip = await Tip.findById(req.params.id);
 
     if (!tip) {
@@ -57,7 +81,16 @@ const updateTip = async (req, res) => {
 
     if (title) tip.title = title;
     if (text) tip.text = text;
-    if (imageUrl !== undefined) tip.imageUrl = imageUrl ? imageUrl.trim() : "";
+    if (req.file) {
+      const { imageUrl, imagePublicId } = await uploadImage(req.file);
+
+      if (tip.imagePublicId) {
+        await cloudinary.uploader.destroy(tip.imagePublicId);
+      }
+
+      tip.imageUrl = imageUrl;
+      tip.imagePublicId = imagePublicId;
+    }
 
     await tip.save();
 
@@ -74,6 +107,10 @@ const deleteTip = async (req, res) => {
 
     if (!tip) {
       return res.status(404).json({ message: "Tip not found" });
+    }
+
+    if (tip.imagePublicId) {
+      await cloudinary.uploader.destroy(tip.imagePublicId);
     }
 
     await tip.deleteOne();
