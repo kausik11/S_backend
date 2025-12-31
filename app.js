@@ -12,6 +12,7 @@ const faqRoutes = require("./src/routes/faqRoutes");
 const callbackRoutes = require("./src/routes/callbackRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
+const tipRoutes = require("./src/routes/tipRoutes");
 const globalErrorHandler = require("./src/middlewares/globalErrorHandler");
 
 app.use(
@@ -41,6 +42,7 @@ app.use("/api/faqs", faqRoutes);
 app.use("/api/callbacks", callbackRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/tips", tipRoutes);
 
 // 404 handler for any unmatched routes
 app.use((req, res) => {
