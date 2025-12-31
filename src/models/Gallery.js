@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const VALID_TAGS = [
-  "clicnic",
+  "clinic",
   "care",
   "kids",
   "events",
