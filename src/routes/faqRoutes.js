@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const authMiddleware = require("../middlewares/authMiddleware");
 const {
   getFaqs,
   getFaqById,
@@ -17,8 +18,8 @@ router.get("/", getFaqs);
 router.get("/search", searchFaqs);
 router.get("/tags/:tag", getFaqsByTag);
 router.get("/:id", getFaqById);
-router.post("/", upload.single("image"), createFaq);
-router.put("/:id", upload.single("image"), updateFaq);
-router.delete("/:id", deleteFaq);
+router.post("/", authMiddleware, upload.single("image"), createFaq);
+router.put("/:id", authMiddleware, upload.single("image"), updateFaq);
+router.delete("/:id", authMiddleware, deleteFaq);
 
 module.exports = router;

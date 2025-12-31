@@ -36,11 +36,11 @@ const callbackRequestSchema = new mongoose.Schema(
     },
     imageUrl: {
       type: String,
-      required: true,
+      trim: true,
     },
     imagePublicId: {
       type: String,
-      required: true,
+      trim: true,
     },
     status: {
       type: String,

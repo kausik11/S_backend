@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const authMiddleware = require("../middlewares/authMiddleware");
 const {
   getBlogs,
   getBlogById,
@@ -19,9 +20,9 @@ router.get("/", getBlogs);
 router.get("/search", debounceSearch, searchBlogs);
 router.get("/category/:category", getBlogsByCategory);
 router.get("/:id", getBlogById);
-router.post("/", upload.single("image"), createBlog);
-router.put("/:id", upload.single("image"), updateBlog);
-router.delete("/:id", deleteBlog);
+router.post("/", authMiddleware, upload.single("image"), createBlog);
+router.put("/:id", authMiddleware, upload.single("image"), updateBlog);
+router.delete("/:id", authMiddleware, deleteBlog);
 router.post("/:id/comments", addComment);
 
 module.exports = router;

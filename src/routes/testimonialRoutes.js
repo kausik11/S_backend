@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const authMiddleware = require("../middlewares/authMiddleware");
 const {
   getTestimonials,
   getTestimonialById,
@@ -13,8 +14,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.get("/", getTestimonials);
 router.get("/:id", getTestimonialById);
-router.post("/", upload.single("image"), createTestimonial);
-router.put("/:id", upload.single("image"), updateTestimonial);
-router.delete("/:id", deleteTestimonial);
+router.post("/", authMiddleware, upload.single("image"), createTestimonial);
+router.put("/:id", authMiddleware, upload.single("image"), updateTestimonial);
+router.delete("/:id", authMiddleware, deleteTestimonial);
 
 module.exports = router;

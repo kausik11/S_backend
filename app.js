@@ -10,6 +10,8 @@ const newsletterRoutes = require("./src/routes/newsletterRoutes");
 const galleryRoutes = require("./src/routes/galleryRoutes");
 const faqRoutes = require("./src/routes/faqRoutes");
 const callbackRoutes = require("./src/routes/callbackRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+const userRoutes = require("./src/routes/userRoutes");
 const globalErrorHandler = require("./src/middlewares/globalErrorHandler");
 
 app.use(
@@ -37,6 +39,8 @@ app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/faqs", faqRoutes);
 app.use("/api/callbacks", callbackRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 // 404 handler for any unmatched routes
 app.use((req, res) => {

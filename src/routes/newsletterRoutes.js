@@ -1,4 +1,5 @@
 const express = require("express");
+const authMiddleware = require("../middlewares/authMiddleware");
 const {
   createSubscription,
   listSubscriptions,
@@ -10,9 +11,9 @@ const {
 const router = express.Router();
 
 router.post("/", createSubscription);
-router.get("/", listSubscriptions);
-router.get("/:id", getSubscription);
-router.put("/:id", updateSubscription);
-router.delete("/:id", deleteSubscription);
+router.get("/", authMiddleware, listSubscriptions);
+router.get("/:id", authMiddleware, getSubscription);
+router.put("/:id", authMiddleware, updateSubscription);
+router.delete("/:id", authMiddleware, deleteSubscription);
 
 module.exports = router;

@@ -40,11 +40,13 @@ const createCallback = async (req, res) => {
       });
     }
 
-    if (!req.file) {
-      return res.status(400).json({ message: "Image file is required" });
+    let imageUrl;
+    let imagePublicId;
+    if (req.file) {
+      const uploaded = await uploadImage(req.file);
+      imageUrl = uploaded.imageUrl;
+      imagePublicId = uploaded.imagePublicId;
     }
-
-    const { imageUrl, imagePublicId } = await uploadImage(req.file);
 
     const callback = await CallbackRequest.create({
       fullName,
@@ -65,11 +67,39 @@ const createCallback = async (req, res) => {
 
 const updateCallback = async (req, res) => {
   try {
-    const { status, adminComment } = req.body;
+    const {
+      status,
+      adminComment,
+      fullName,
+      phoneNumber,
+      email,
+      location,
+      description,
+    } = req.body;
     const callback = await CallbackRequest.findById(req.params.id);
 
     if (!callback) {
       return res.status(404).json({ message: "Callback request not found" });
+    }
+
+    if (fullName !== undefined) callback.fullName = fullName;
+    if (phoneNumber !== undefined) callback.phoneNumber = phoneNumber;
+    if (email !== undefined) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ message: "Valid email is required" });
+      }
+      callback.email = email;
+    }
+    if (location !== undefined) {
+      if (!VALID_LOCATIONS.includes(location)) {
+        return res.status(400).json({
+          message: "Invalid location. Use kolkata, howrah, or bardhaman",
+        });
+      }
+      callback.location = location;
+    }
+    if (description !== undefined) {
+      callback.description = description;
     }
 
     if (status) {
@@ -85,9 +115,16 @@ const updateCallback = async (req, res) => {
       callback.adminComment = adminComment;
     }
 
-    // if (description !== undefined) {
-    //   callback.description = description;
-    // }
+    if (req.file) {
+      const { imageUrl, imagePublicId } = await uploadImage(req.file);
+
+      if (callback.imagePublicId) {
+        await cloudinary.uploader.destroy(callback.imagePublicId);
+      }
+
+      callback.imageUrl = imageUrl;
+      callback.imagePublicId = imagePublicId;
+    }
 
     await callback.save();
     res.status(200).json(callback);
@@ -122,9 +159,30 @@ const getCallback = async (req, res) => {
   }
 };
 
+const deleteCallback = async (req, res) => {
+  try {
+    const callback = await CallbackRequest.findById(req.params.id);
+
+    if (!callback) {
+      return res.status(404).json({ message: "Callback request not found" });
+    }
+
+    if (callback.imagePublicId) {
+      await cloudinary.uploader.destroy(callback.imagePublicId);
+    }
+
+    await callback.deleteOne();
+    res.status(200).json({ message: "Callback request deleted" });
+  } catch (error) {
+    console.error("Failed to delete callback request:", error);
+    res.status(500).json({ message: "Failed to delete callback request" });
+  }
+};
+
 module.exports = {
   createCallback,
   updateCallback,
   listCallbacks,
   getCallback,
+  deleteCallback,
 };
