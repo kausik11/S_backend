@@ -2,7 +2,7 @@ const Gallery = require("../models/Gallery");
 const cloudinary = require("../config/cloudinary");
 
 const VALID_TAGS = [
-  "clicnic",
+  "clinic",
   "care",
   "kids",
   "events",
