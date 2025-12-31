@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 app.get("/", (req, res) => {
-  res.send("hello");
+  res.send("Welcome to backend services");
 });
 app.get("/api/health", (_req, res) =>
   res.json({ ok: true, uptime: process.uptime(), ts: Date.now() })
