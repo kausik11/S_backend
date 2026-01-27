@@ -1,32 +1,13 @@
 const CallbackRequest = require("../models/CallbackRequest");
-const cloudinary = require("../config/cloudinary");
-
 const VALID_STATUSES = ["pending", "not received", "done"];
-const VALID_LOCATIONS = ["kolkata", "howrah", "bardhaman"];
-
-const uploadImage = async (file) => {
-  const base64Image = `data:${file.mimetype};base64,${file.buffer.toString(
-    "base64"
-  )}`;
-
-  const uploadResult = await cloudinary.uploader.upload(base64Image, {
-    folder: "sbanerjee/callbacks",
-    resource_type: "auto",
-  });
-
-  return {
-    imageUrl: uploadResult.secure_url,
-    imagePublicId: uploadResult.public_id,
-  };
-};
 
 const createCallback = async (req, res) => {
   try {
-    const { fullName, phoneNumber, email, location, description } = req.body;
+    const { fullName, phoneNumber, email, chamberName, description } = req.body;
 
-    if (!fullName || !phoneNumber || !email || !location) {
+    if (!fullName || !phoneNumber || !email || !chamberName) {
       return res.status(400).json({
-        message: "Full name, phone number, email, and location are required",
+        message: "Full name, phone number, email, and chamber name are required",
       });
     }
 
@@ -34,28 +15,12 @@ const createCallback = async (req, res) => {
       return res.status(400).json({ message: "Valid email is required" });
     }
 
-    if (!VALID_LOCATIONS.includes(location)) {
-      return res.status(400).json({
-        message: "Invalid location. Use kolkata, howrah, or bardhaman",
-      });
-    }
-
-    let imageUrl;
-    let imagePublicId;
-    if (req.file) {
-      const uploaded = await uploadImage(req.file);
-      imageUrl = uploaded.imageUrl;
-      imagePublicId = uploaded.imagePublicId;
-    }
-
     const callback = await CallbackRequest.create({
       fullName,
       phoneNumber,
       email,
-      location,
+      chamberName,
       description,
-      imageUrl,
-      imagePublicId,
     });
 
     res.status(201).json(callback);
@@ -73,7 +38,7 @@ const updateCallback = async (req, res) => {
       fullName,
       phoneNumber,
       email,
-      location,
+      chamberName,
       description,
     } = req.body;
     const callback = await CallbackRequest.findById(req.params.id);
@@ -90,13 +55,8 @@ const updateCallback = async (req, res) => {
       }
       callback.email = email;
     }
-    if (location !== undefined) {
-      if (!VALID_LOCATIONS.includes(location)) {
-        return res.status(400).json({
-          message: "Invalid location. Use kolkata, howrah, or bardhaman",
-        });
-      }
-      callback.location = location;
+    if (chamberName !== undefined) {
+      callback.chamberName = chamberName;
     }
     if (description !== undefined) {
       callback.description = description;
@@ -113,17 +73,6 @@ const updateCallback = async (req, res) => {
 
     if (adminComment !== undefined) {
       callback.adminComment = adminComment;
-    }
-
-    if (req.file) {
-      const { imageUrl, imagePublicId } = await uploadImage(req.file);
-
-      if (callback.imagePublicId) {
-        await cloudinary.uploader.destroy(callback.imagePublicId);
-      }
-
-      callback.imageUrl = imageUrl;
-      callback.imagePublicId = imagePublicId;
     }
 
     await callback.save();
@@ -165,10 +114,6 @@ const deleteCallback = async (req, res) => {
 
     if (!callback) {
       return res.status(404).json({ message: "Callback request not found" });
-    }
-
-    if (callback.imagePublicId) {
-      await cloudinary.uploader.destroy(callback.imagePublicId);
     }
 
     await callback.deleteOne();

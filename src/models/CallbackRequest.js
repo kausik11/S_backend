@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
 const VALID_STATUSES = ["pending", "not received", "done"];
-const VALID_LOCATIONS = ["kolkata", "howrah", "bardhaman"];
-
 const callbackRequestSchema = new mongoose.Schema(
   {
     fullName: {
@@ -25,20 +23,12 @@ const callbackRequestSchema = new mongoose.Schema(
         "Please provide a valid email address",
       ],
     },
-    location: {
+    chamberName: {
       type: String,
       required: true,
-      enum: VALID_LOCATIONS,
+      trim: true,
     },
     description: {
-      type: String,
-      trim: true,
-    },
-    imageUrl: {
-      type: String,
-      trim: true,
-    },
-    imagePublicId: {
       type: String,
       trim: true,
     },
