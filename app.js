@@ -14,6 +14,7 @@ const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const tipRoutes = require("./src/routes/tipRoutes");
 const chamberRoutes = require("./src/routes/chamberRoutes");
+const certificateRoutes = require("./src/routes/certificateRoutes");
 const globalErrorHandler = require("./src/middlewares/globalErrorHandler");
 
 app.use(
@@ -45,6 +46,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/tips", tipRoutes);
 app.use("/api/chambers", chamberRoutes);
+app.use("/api/certificates", certificateRoutes);
 
 // 404 handler for any unmatched routes
 app.use((req, res) => {
