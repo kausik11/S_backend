@@ -15,6 +15,7 @@ const userRoutes = require("./src/routes/userRoutes");
 const tipRoutes = require("./src/routes/tipRoutes");
 const chamberRoutes = require("./src/routes/chamberRoutes");
 const certificateRoutes = require("./src/routes/certificateRoutes");
+const videoGalleryRoutes = require("./src/routes/videoGalleryRoutes");
 const globalErrorHandler = require("./src/middlewares/globalErrorHandler");
 
 app.use(
@@ -47,6 +48,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/tips", tipRoutes);
 app.use("/api/chambers", chamberRoutes);
 app.use("/api/certificates", certificateRoutes);
+app.use("/api/video-gallery", videoGalleryRoutes);
 
 // 404 handler for any unmatched routes
 app.use((req, res) => {
