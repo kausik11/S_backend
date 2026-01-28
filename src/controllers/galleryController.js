@@ -8,6 +8,7 @@ const VALID_TAGS = [
   "events",
   "wellness",
   "nutrition",
+  "certificates",
 ];
 
 const uploadImage = async (file) => {
