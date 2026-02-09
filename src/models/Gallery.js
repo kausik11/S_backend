@@ -7,6 +7,7 @@ const VALID_TAGS = [
   "events",
   "wellness",
   "nutrition",
+  "certificates",
 ];
 
 const gallerySchema = new mongoose.Schema(
