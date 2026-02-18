@@ -12,10 +12,13 @@ const normalizeTimings = (value) => {
     .filter(Boolean);
 };
 
+const normalizeText = (value) => `${value || ""}`.trim();
+
 const formatChamber = (chamber) => ({
   ...chamber.toObject(),
   lines: [
     chamber.name,
+    chamber.address,
     ...chamber.timings,
     `Call: ${chamber.contact}`,
   ],
@@ -48,18 +51,21 @@ const getChamberById = async (req, res) => {
 
 const createChamber = async (req, res) => {
   try {
-    const { name, contact } = req.body;
+    const name = normalizeText(req.body.name);
+    const contact = normalizeText(req.body.contact);
+    const address = normalizeText(req.body.address);
     const timings = normalizeTimings(req.body.timings);
 
-    if (!name || !contact || timings.length === 0) {
+    if (!name || !contact || !address || timings.length === 0) {
       return res.status(400).json({
-        message: "Name, contact, and timings are required",
+        message: "Name, contact, address, and timings are required",
       });
     }
 
     const chamber = await Chamber.create({
       name,
       contact,
+      address,
       timings,
     });
 
@@ -78,10 +84,13 @@ const updateChamber = async (req, res) => {
       return res.status(404).json({ message: "Chamber not found" });
     }
 
-    const { name, contact } = req.body;
+    const name = normalizeText(req.body.name);
+    const contact = normalizeText(req.body.contact);
+    const address = normalizeText(req.body.address);
 
     if (name) chamber.name = name;
     if (contact) chamber.contact = contact;
+    if (address) chamber.address = address;
 
     if (req.body.timings !== undefined) {
       const timings = normalizeTimings(req.body.timings);
